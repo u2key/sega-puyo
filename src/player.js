@@ -293,9 +293,15 @@ class Player {
     if (this.puyoStatus.y >= 0) {
       Stage.setPuyo(this.puyoStatus.x, this.puyoStatus.y, this.centerPuyo);
       Stage.puyoCount = Stage.puyoCount + 1;
+    } else {
+      Stage.setHiddenPuyo(this.puyoStatus.x, this.centerPuyo);
+      Stage.puyoCount = Stage.puyoCount + 1;
     }
     if (this.puyoStatus.y + this.puyoStatus.dy >= 0) {
       Stage.setPuyo(this.puyoStatus.x + this.puyoStatus.dx, this.puyoStatus.y + this.puyoStatus.dy, this.movablePuyo);
+      Stage.puyoCount = Stage.puyoCount + 1;
+    } else {
+      Stage.setHiddenPuyo(this.puyoStatus.x + this.puyoStatus.dx, this.movablePuyo);
       Stage.puyoCount = Stage.puyoCount + 1;
     }
     Stage.stageElement.removeChild(this.centerPuyoElement);
