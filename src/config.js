@@ -5,6 +5,8 @@ Config.puyoImgHeight = 40;
 
 Config.fontHeight = 33;
 
+Config.nextPuyosNumber = 2;
+
 Config.stageCols = 6;
 Config.stageRows = 12;
 
