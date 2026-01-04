@@ -7,44 +7,30 @@ class Player {
       down: false
     };
     document.addEventListener('keydown', (e) => {
-      switch (e.keyCode) {
-        case 37: 
-          this.keyStatus.left = true;
-          e.preventDefault(); 
-          return false;
-        case 38:
-          this.keyStatus.up = true;
-          e.preventDefault(); 
-          return false;
-        case 39:
-          this.keyStatus.right = true;
-          e.preventDefault(); 
-          return false;
-        case 40:
-          this.keyStatus.down = true;
-          e.preventDefault(); 
-          return false;
+      e.preventDefault(); 
+      if (e.keyCode == 37) {
+        this.keyStatus.left = true;
+      } else if (e.keyCode == 38) {
+        this.keyStatus.up = true;
+      } else if (e.keyCode == 39) {
+        this.keyStatus.right = true;
+      } else if (e.keyCode == 40) {
+        this.keyStatus.down = true;
       }
+      return false;
     });
     document.addEventListener('keyup', (e) => {
-      switch (e.keyCode) {
-        case 37:
-          this.keyStatus.left = false;
-          e.preventDefault(); 
-          return false;
-        case 38:
-          this.keyStatus.up = false;
-          e.preventDefault(); 
-          return false;
-        case 39: 
-          this.keyStatus.right = false;
-          e.preventDefault(); 
-          return false;
-        case 40:
-          this.keyStatus.down = false;
-          e.preventDefault(); 
-          return false;
+      e.preventDefault(); 
+      if (e.keyCode == 37) {
+        this.keyStatus.left = false;
+      } else if (e.keyCode == 38) {
+        this.keyStatus.up = false;
+      } else if (e.keyCode == 39) {
+        this.keyStatus.right = false;
+      } else if (e.keyCode == 40) {
+        this.keyStatus.down = false;
       }
+      return false;
     });
     this.touchPoint = {
       xs: 0,
@@ -76,7 +62,6 @@ class Player {
     const gesture = (xs, ys, xe, ye) => {
       const horizonDirection = xe - xs;
       const verticalDirection = ye - ys;
-
       if (Math.abs(horizonDirection) < Math.abs(verticalDirection)) {
         if (verticalDirection < 0) {
           this.keyStatus.up = true;
@@ -109,13 +94,17 @@ class Player {
     if (Stage.board[0][2]) {
       return false;
     }
-    const puyoColors = Math.max(1, Math.min(5, Config.puyoColors));
-    this.centerPuyo = Math.floor(Math.random() * puyoColors) + 1;
-    this.movablePuyo = Math.floor(Math.random() * puyoColors) + 1;
-    this.centerPuyoElement = PuyoImage.getPuyo(this.centerPuyo);
-    this.movablePuyoElement = PuyoImage.getPuyo(this.movablePuyo);
+    this.centerPuyo = Math.floor(Math.random() * Config.puyoColors) + 1;
+    this.movablePuyo = Math.floor(Math.random() * Config.puyoColors) + 1;
+    let nextPuyosSet = PuyoImage.getNextPuyos();
+    this.centerPuyo = nextPuyosSet.centerPuyo;
+    this.centerPuyoElement = nextPuyosSet.centerPuyoElement;
+    this.movablePuyo = nextPuyosSet.movablePuyo;
+    this.movablePuyoElement = nextPuyosSet.movablePuyoElement;
     Stage.stageElement.appendChild(this.centerPuyoElement);
+    this.centerPuyoElement.style.position = 'absolute';
     Stage.stageElement.appendChild(this.movablePuyoElement);
+    this.movablePuyoElement.style.position = 'absolute';
     this.puyoStatus = {
       x: 2, y: -1,
       left: 2 * Config.puyoImgWidth, top: -1 * Config.puyoImgHeight,
@@ -127,12 +116,12 @@ class Player {
   }
 
   static setPuyoPosition () {
-    this.centerPuyoElement.style.left = this.puyoStatus.left + 'px';
-    this.centerPuyoElement.style.top = this.puyoStatus.top + 'px';
+    this.centerPuyoElement.style.left = `${this.puyoStatus.left}px`;
+    this.centerPuyoElement.style.top = `${this.puyoStatus.top}px`;
     const x = this.puyoStatus.left + Math.cos(this.puyoStatus.rotation * Math.PI / 180) * Config.puyoImgWidth;
     const y = this.puyoStatus.top - Math.sin(this.puyoStatus.rotation * Math.PI / 180) * Config.puyoImgHeight;
-    this.movablePuyoElement.style.left = x + 'px';
-    this.movablePuyoElement.style.top = y + 'px';
+    this.movablePuyoElement.style.left = `${x}px`;
+    this.movablePuyoElement.style.top = `${y}px`;
   }
 
   static falling (isDownPressed) {
@@ -295,6 +284,7 @@ class Player {
     }
     return 'playing';
   }
+  
   static moving(frame) {
     this.falling();
     const ratio = Math.min(1, (frame - this.actionStartFrame) / Config.playerMoveFrame);
@@ -305,6 +295,7 @@ class Player {
     }
     return true;
   }
+  
   static rotating(frame) {
     this.falling();
     const ratio = Math.min(1, (frame - this.actionStartFrame) / Config.playerRotateFrame);
@@ -317,6 +308,7 @@ class Player {
     }
     return true;
   }
+  
   static fix() {
     const x = this.puyoStatus.x;
     const y = this.puyoStatus.y;
