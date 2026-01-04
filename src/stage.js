@@ -1,61 +1,44 @@
 class Stage {
   static initialize() {
-    const stageElement = document.getElementById("stage");
-    stageElement.style.width = Config.puyoImgWidth * Config.stageCols + 'px';
-    stageElement.style.height = Config.puyoImgHeight * Config.stageRows + 'px';
-    stageElement.style.backgroundColor = Config.stageBackgroundColor;
-    this.stageElement = stageElement;
+    this.stageElement = document.getElementById("stage");
+    this.stageElement.style.width = `${Config.puyoImgWidth * Config.stageCols}px`;
+    this.stageElement.style.height = `${Config.puyoImgHeight * Config.stageRows}px`;
+    this.stageElement.style.backgroundColor = Config.stageBackgroundColor;
     
-    const zenkeshiImage = document.getElementById("zenkeshi");
-    zenkeshiImage.width = Config.puyoImgWidth * 6;
-    zenkeshiImage.style.position = 'absolute';
-    zenkeshiImage.style.display = 'none';        
-    this.zenkeshiImage = zenkeshiImage;
-    stageElement.appendChild(zenkeshiImage);
+    this.zenkeshiImage = new Image();
+    Game.loadImg('img/zenkeshi.png', this.zenkeshiImage, () => {
+      this.zenkeshiImage.width = Config.puyoImgWidth * 6;
+      this.zenkeshiImage.style.position = 'absolute';
+      this.zenkeshiImage.style.display = 'none';
+    });
+    this.stageElement.appendChild(Stage.zenkeshiImage);
 
-    const scoreElement = document.getElementById("score");
-    scoreElement.style.backgroundColor = Config.scoreBackgroundColor;
-    const scoreTop = Config.puyoImgHeight * Config.stageRows;
-    scoreElement.style.top = `${scoreTop}px`;
-    const scoreLeft = Config.puyoImgWidth * Config.stageCols;
-    scoreElement.style.width = `${scoreLeft}px`;
-    scoreElement.style.height = `${Config.fontHeight}px`;
-    this.scoreElement = scoreElement;
+    this.scoreElement = document.getElementById("score");
+    this.scoreElement.style.backgroundColor = Config.scoreBackgroundColor;
+    this.scoreElement.style.top = `${Config.puyoImgHeight * Config.stageRows}px`;
+    this.scoreElement.style.width = `${Config.puyoImgWidth * Config.stageCols}px`;
+    this.scoreElement.style.height = `${Config.fontHeight}px`;
 
     this.nextPuyosElement = document.getElementById("nextPuyos");
     this.nextPuyosElement.style.position = 'absolute';
     this.nextPuyosElement.style.top = '0px';
     this.nextPuyosElement.style.left = `${(document.body.clientWidth + (Config.puyoImgWidth * Config.stageCols)) / 2}px`
 
-    this.board = [
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-    ];
-    
-    let puyoCount = 0;
+    this.board = [];
+    this.hiddenBoard = [];
+    this.puyoCount = 0;
     for (let y = 0; y < Config.stageRows; y++) {
-      const line = this.board[y] || (this.board[y] = []);
+      this.board.push([]);
       for (let x = 0; x < Config.stageCols; x++) {
-        const puyo = line[x];
-        if (puyo >= 1 && puyo <= 5) {
-          this.setPuyo(x, y, puyo);
-          puyoCount++;
-        } else {
-          line[x] = null;
-        }
+        this.board[y].push(null);
       }
     }
-    this.puyoCount = puyoCount;
+    for (let x = 0; x < Config.stageCols; x++) {
+      this.hiddenBoard.push(null);
+    }
+
+    this.fallingPuyoList = [];
+    this.erasingPuyoInfoList = [];
   }
 
   static showNextPuyos() {
@@ -74,15 +57,20 @@ class Stage {
   
   static setPuyo(x, y, puyo) {
     const puyoImage = PuyoImage.getPuyo(puyo);
-    puyoImage.style.left = x * Config.puyoImgWidth + "px";
-    puyoImage.style.top = y * Config.puyoImgHeight + "px";
+    puyoImage.style.left = `${x * Config.puyoImgWidth}px`;
+    puyoImage.style.top = `${y * Config.puyoImgHeight}px`;
     this.stageElement.appendChild(puyoImage);
-    this.board[y][x] = {
-      puyo: puyo,
-      element: puyoImage
-    };
+    this.board[y][x] = {puyo: puyo, element: puyoImage};
   }
 
+  static setHiddenPuyo(x, puyo) {
+    let puyoImage = PuyoImage.getPuyo(puyo);
+    puyoImage.style.left = `${x * Config.puyoImgWidth}px`;
+    puyoImage.style.top = `${-1 * Config.puyoImgHeight}px`;
+    this.stageElement.appendChild(puyoImage);
+    this.hiddenBoard[x] = {puyo: puyo, element: puyoImage};
+  }
+  
   static checkFall() {
     this.fallingPuyoList.length = 0;
     let isFalling = false;
@@ -97,7 +85,7 @@ class Stage {
           this.board[y][x] = null;
           let dst = y;
           while (dst + 1 < Config.stageRows && this.board[dst + 1][x] == null) {
-            dst++;
+            dst = dst + 1;
           }
           this.board[dst][x] = cell;
           this.fallingPuyoList.push({
@@ -106,6 +94,25 @@ class Stage {
             destination: dst * Config.puyoImgHeight,
             falling: true
           });
+          isFalling = true;
+        }
+      }
+      for (let x = 0; x < Config.stageCols; x++) {
+        if (this.hiddenBoard[x]) {
+          let dst = 0;
+          while (dst < Config.stageRows && this.board[dst][x] == null) {
+            dst = dst + 1;
+          }
+          if (dst > 0) {
+            this.board[dst - 1][x] = this.hiddenBoard[x];
+            this.hiddenBoard[x] = null;
+            this.fallingPuyoList.push({
+              element: this.board[dst - 1][x].element,
+              position: -1 * Config.puyoImgHeight,
+              destination: (dst - 1) * Config.puyoImgHeight,
+              falling: true
+            });
+          }
           isFalling = true;
         }
       }
@@ -119,8 +126,7 @@ class Stage {
       if (!fallingPuyo.falling) {
         continue;
       }
-      let position = fallingPuyo.position;
-      position += Config.freeFallingSpeed;
+      let position = fallingPuyo.position + Config.freeFallingSpeed;
       if (position >= fallingPuyo.destination) {
         position = fallingPuyo.destination;
         fallingPuyo.falling = false;
@@ -128,7 +134,7 @@ class Stage {
         isFalling = true;
       }
       fallingPuyo.position = position;
-      fallingPuyo.element.style.top = position + 'px';
+      fallingPuyo.element.style.top = `${position}px`;
     }
     return isFalling;
   }
@@ -145,17 +151,13 @@ class Stage {
         return false;
       }
       const puyo = this.board[y][x].puyo;
-      sequencePuyoInfoList.push({
-        x: x,
-        y: y,
-        cell: this.board[y][x]
-      });
+      sequencePuyoInfoList.push({x: x, y: y, cell: this.board[y][x]});
       this.board[y][x] = null;
 
       const direction = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-      for (let i = 0; i < direction.length; i++) {
-        const dx = x + direction[i][0];
-        const dy = y + direction[i][1];
+      for (let a = 0; a < direction.length; a++) {
+        const dx = x + direction[a][0];
+        const dy = y + direction[a][1];
         if (dx < 0 || dy < 0 || dx >= Config.stageCols || dy >= Config.stageRows) {
           continue;
         }
@@ -199,31 +201,31 @@ class Stage {
     const ratio = elapsedFrame / Config.eraseAnimationDuration;
     if (ratio > 1) {
       for (const info of this.erasingPuyoInfoList) {
-        var element = info.cell.element;
+        let element = info.cell.element;
         this.stageElement.removeChild(element);
       }
       return false;
     } else if (ratio > 0.75) {
       for (const info of this.erasingPuyoInfoList) {
-        var element = info.cell.element;
+        let element = info.cell.element;
         element.style.display = 'block';
       }
       return true;
     } else if (ratio > 0.50) {
       for (const info of this.erasingPuyoInfoList) {
-        var element = info.cell.element;
+        let element = info.cell.element;
         element.style.display = 'none';
       }
       return true;
     } else if (ratio > 0.25) {
       for (const info of this.erasingPuyoInfoList) {
-        var element = info.cell.element;
+        let element = info.cell.element;
         element.style.display = 'block';
       }
       return true;
     } else {
       for (const info of this.erasingPuyoInfoList) {
-        var element = info.cell.element;
+        let element = info.cell.element;
         element.style.display = 'none';
       }
       return true;
@@ -238,7 +240,7 @@ class Stage {
     const endTop = Config.puyoImgHeight * Config.stageRows / 3;
     const animation = () => {
       const ratio = Math.min((Date.now() - startTime) / Config.zenkeshiDuration, 1);
-      this.zenkeshiImage.style.top = (endTop - startTop) * ratio + startTop + 'px';
+      this.zenkeshiImage.style.top = `${(endTop - startTop) * ratio + startTop}px`;
       if (ratio !== 1) {
         requestAnimationFrame(animation);
       }
@@ -260,6 +262,3 @@ class Stage {
     animation();
   }
 }
-
-Stage.fallingPuyoList = [];
-Stage.erasingPuyoInfoList = [];
