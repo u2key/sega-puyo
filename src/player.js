@@ -157,7 +157,7 @@ class Player {
     let nextMode = 'playing';
     if (this.falling(this.keyStatus.down)) {
       this.setPuyoPosition();
-      nextNode = 'fix';
+      nextMode = 'fix';
     }
     this.setPuyoPosition();
     if (this.keyStatus.right || this.keyStatus.left) {
