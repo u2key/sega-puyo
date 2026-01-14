@@ -22,7 +22,7 @@ class PuyoImage {
   }
 
   static start() {
-    for (let a = 0; a < Config.nextPuyosSetCount; a++) {
+    for (let a = 0; a < Config.nextPuyosNumber; a++) {
       this.nextPuyosSet.push({});
       this.nextPuyosSet[a].movablePuyo = Math.floor(Math.random() * Config.puyoColors) + 1;
       this.nextPuyosSet[a].movablePuyoElement = this.getPuyo(this.nextPuyosSet[a].movablePuyo);
