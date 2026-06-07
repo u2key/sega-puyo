@@ -3,26 +3,44 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
-    <title>ぷよぷよの制作を体験してみよう！</title>
+    <title>ぷよぷよオンライン対戦</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Game scripts (order matters!) -->
+    <script src="src/rng.js"></script>
     <script src="src/config.js"></script>
     <script src="src/stage.js"></script>
     <script src="src/score.js"></script>
     <script src="src/puyoimage.js"></script>
     <script src="src/player.js"></script>
+    <script src="src/network.js"></script>
+    <script src="src/ui.js"></script>
+    <script src="src/ojama.js"></script>
     <script src="src/game.js"></script>
+
     <link rel="stylesheet" href="css/style.css">
-    <script type="text/javascript">
-      window.addEventListener("load", () => {
+
+    <script>
+      window.addEventListener('load', () => {
         Game.initialize();
       });
     </script>
   </head>
-  <body style="margin:0;">
-    <div id="stage" style="position:relative; margin: 0 auto; overflow: hidden;background: url(img/puyo_2bg.png)"></div>
-    <div id="score" style="margin: 0 auto; overflow: hidden; text-align: right;"></div>
-    <div id="nextPuyos" style="margin: 0 auto; overflow: hidden; text-align: right;"></div>
-    <div style="display: none">
+  <body>
+    <!-- 自分のゲームフィールド -->
+    <div id="game-wrapper">
+      <div id="player-label">あなた</div>
+      <div id="stage" style="position:relative; overflow:hidden; background: url(img/puyo_2bg.png)"></div>
+      <div id="score" style="overflow:hidden; text-align:right;"></div>
+      <div id="nextPuyos" style="position:absolute; overflow:hidden; text-align:right;"></div>
+    </div>
+
+    <!-- 隠しimg要素（ぷよ画像プリロード用） -->
+    <div style="display:none">
       <img src="img/puyo_1.png" id="puyo_1">
       <img src="img/puyo_2.png" id="puyo_2">
       <img src="img/puyo_3.png" id="puyo_3">
