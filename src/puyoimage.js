@@ -9,10 +9,7 @@ class PuyoImage {
         this.puyoImages[a].style.position = 'absolute';
       });
     }
-    for (let i = this.puyoImages.length - 1; i >= 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [this.puyoImages[i], this.puyoImages[j]] = [this.puyoImages[j], this.puyoImages[i]];
-    }
+    // NOTE: シャッフルはしない。色番号1-5がそのまま対応する
     this.batankyuImage = new Image();
     Game.loadImg('img/batankyu.png', this.batankyuImage, () => {
       this.batankyuImage.width = Config.puyoImgWidth * 6;
@@ -24,9 +21,9 @@ class PuyoImage {
   static start() {
     for (let a = 0; a < Config.nextPuyosNumber; a++) {
       this.nextPuyosSet.push({});
-      this.nextPuyosSet[a].movablePuyo = Math.floor(Math.random() * Config.puyoColors) + 1;
+      this.nextPuyosSet[a].movablePuyo = RNG.nextInt(Config.puyoColors) + 1;
       this.nextPuyosSet[a].movablePuyoElement = this.getPuyo(this.nextPuyosSet[a].movablePuyo);
-      this.nextPuyosSet[a].centerPuyo = Math.floor(Math.random() * Config.puyoColors) + 1;
+      this.nextPuyosSet[a].centerPuyo = RNG.nextInt(Config.puyoColors) + 1;
       this.nextPuyosSet[a].centerPuyoElement = this.getPuyo(this.nextPuyosSet[a].centerPuyo);
     }
   }
@@ -34,10 +31,11 @@ class PuyoImage {
   static getNextPuyos() {
     let nextPuyos = this.nextPuyosSet.shift();
     this.nextPuyosSet.push({});
-    this.nextPuyosSet[Config.nextPuyosNumber - 1].movablePuyo = Math.floor(Math.random() * this.puyoImages.length) + 1;
-    this.nextPuyosSet[Config.nextPuyosNumber - 1].movablePuyoElement = this.getPuyo(this.nextPuyosSet[Config.nextPuyosNumber - 1].movablePuyo);
-    this.nextPuyosSet[Config.nextPuyosNumber - 1].centerPuyo = Math.floor(Math.random() * this.puyoImages.length) + 1;
-    this.nextPuyosSet[Config.nextPuyosNumber - 1].centerPuyoElement = this.getPuyo(this.nextPuyosSet[Config.nextPuyosNumber - 1].centerPuyo);
+    const last = Config.nextPuyosNumber - 1;
+    this.nextPuyosSet[last].movablePuyo = RNG.nextInt(this.puyoImages.length) + 1;
+    this.nextPuyosSet[last].movablePuyoElement = this.getPuyo(this.nextPuyosSet[last].movablePuyo);
+    this.nextPuyosSet[last].centerPuyo = RNG.nextInt(this.puyoImages.length) + 1;
+    this.nextPuyosSet[last].centerPuyoElement = this.getPuyo(this.nextPuyosSet[last].centerPuyo);
     Stage.showNextPuyos();
     return nextPuyos;
   }
