@@ -108,30 +108,18 @@ class UI {
     this.opponentWrapper.appendChild(this.opponentCanvas);
     this.opponentWrapper.appendChild(this.opponentOjamaLabel);
     this.opponentWrapper.appendChild(this.opponentScoreLabel);
-    document.body.appendChild(this.opponentWrapper);
+    
+    const container = document.getElementById('opponent-container');
+    if (container) {
+      container.appendChild(this.opponentWrapper);
+    } else {
+      document.body.appendChild(this.opponentWrapper);
+    }
 
-    // 位置調整はゲーム開始後に行う
     this.opponentWrapper.style.display = 'none';
   }
 
   static positionOpponentArea() {
-    const stageEl = document.getElementById('stage');
-    const rect = stageEl.getBoundingClientRect();
-    const pw = Config.puyoImgWidth;
-    const ph = Config.puyoImgHeight;
-    const opW = Config.stageCols * pw;
-
-    // 自分のフィールドの右隣に配置
-    const leftPos = rect.right + 16;
-    const topPos = rect.top;
-
-    if (leftPos + opW > window.innerWidth) {
-      // 画面に収まらない場合は左側に配置
-      this.opponentWrapper.style.left = `${rect.left - opW - 16}px`;
-    } else {
-      this.opponentWrapper.style.left = `${leftPos}px`;
-    }
-    this.opponentWrapper.style.top = `${topPos}px`;
     this.opponentWrapper.style.display = 'flex';
   }
 
@@ -205,8 +193,9 @@ class UI {
     this.ojamaIndicator = document.createElement('div');
     this.ojamaIndicator.id = 'ojama-indicator';
     Object.assign(this.ojamaIndicator.style, {
-      position: 'fixed',
-      top: '4px',
+      position: 'absolute',
+      top: '-30px',
+      left: '0px',
       background: 'rgba(0,0,0,0.7)',
       color: '#ffd93d',
       fontFamily: 'monospace',
@@ -216,15 +205,19 @@ class UI {
       borderRadius: '6px',
       zIndex: '200',
       display: 'none',
+      whiteSpace: 'nowrap',
     });
-    document.body.appendChild(this.ojamaIndicator);
+    
+    const wrapper = document.getElementById('game-wrapper');
+    if (wrapper) {
+      wrapper.appendChild(this.ojamaIndicator);
+    } else {
+      document.body.appendChild(this.ojamaIndicator);
+    }
   }
 
   static positionOjamaIndicator() {
-    const stageEl = document.getElementById('stage');
-    if (!stageEl) return;
-    const rect = stageEl.getBoundingClientRect();
-    this.ojamaIndicator.style.left = `${rect.left}px`;
+    // 構造的に対応済みのため何もしない
   }
 
   static updateOjamaIndicator(pending, buffer) {

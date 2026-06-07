@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { WebSocketServer } = require('ws');
 
-const PORT = 3000;
+const PORT = 25565;
 const STATIC_DIR = path.join(__dirname);
 
 // ── Static file server ─────────────────────────────────────────────────────

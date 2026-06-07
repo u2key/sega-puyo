@@ -20,9 +20,7 @@ class Stage {
     this.scoreElement.style.height = `${Config.fontHeight}px`;
 
     this.nextPuyosElement = document.getElementById("nextPuyos");
-    this.nextPuyosElement.style.position = 'absolute';
-    this.nextPuyosElement.style.top = '0px';
-    this.nextPuyosElement.style.left = `${(document.body.clientWidth + (Config.puyoImgWidth * Config.stageCols)) / 2}px`;
+    // Position styling is handled by CSS / inline styles in index.html now.
 
     this.board = [];
     this.hiddenBoard = [];
@@ -47,11 +45,14 @@ class Stage {
     }
     for (let a = 0; a < Config.nextPuyosNumber; a++) {
       this.nextPuyosElement.appendChild(PuyoImage.nextPuyosSet[a].movablePuyoElement);
-      PuyoImage.nextPuyosSet[a].movablePuyoElement.style.position = 'fixed';
+      PuyoImage.nextPuyosSet[a].movablePuyoElement.style.position = 'absolute';
       PuyoImage.nextPuyosSet[a].movablePuyoElement.style.top = `${(a * 3 + 0) * Config.puyoImgHeight}px`;
+      PuyoImage.nextPuyosSet[a].movablePuyoElement.style.left = '0px';
+      
       this.nextPuyosElement.appendChild(PuyoImage.nextPuyosSet[a].centerPuyoElement);
-      PuyoImage.nextPuyosSet[a].centerPuyoElement.style.position = 'fixed';
+      PuyoImage.nextPuyosSet[a].centerPuyoElement.style.position = 'absolute';
       PuyoImage.nextPuyosSet[a].centerPuyoElement.style.top = `${(a * 3 + 1) * Config.puyoImgHeight}px`;
+      PuyoImage.nextPuyosSet[a].centerPuyoElement.style.left = '0px';
     }
   }
   

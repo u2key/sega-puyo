@@ -31,12 +31,20 @@
     </script>
   </head>
   <body>
-    <!-- 自分のゲームフィールド -->
-    <div id="game-wrapper">
-      <div id="player-label">あなた</div>
-      <div id="stage" style="position:relative; overflow:hidden; background: url(img/puyo_2bg.png)"></div>
-      <div id="score" style="overflow:hidden; text-align:right;"></div>
-      <div id="nextPuyos" style="position:absolute; overflow:hidden; text-align:right;"></div>
+    <div id="game-container" style="display: flex; justify-content: center; align-items: flex-start; gap: 40px; padding-top: 40px; height: 100vh;">
+      
+      <!-- 対戦相手の表示エリア -->
+      <div id="opponent-container"></div>
+      
+      <!-- 自分のゲームフィールド -->
+      <div id="game-wrapper" style="position: relative;">
+        <div id="player-label" style="margin-bottom: 4px;">あなた</div>
+        <div id="stage" style="position:relative; overflow:hidden; background: url(img/puyo_2bg.png)"></div>
+        <div id="score" style="overflow:hidden; text-align:right;"></div>
+        <!-- NEXT puyos: 自分のステージの右側に配置 -->
+        <div id="nextPuyos" style="position:absolute; overflow:hidden; top: 20px; right: -60px; width: 40px; height: 300px;"></div>
+      </div>
+      
     </div>
 
     <!-- 隠しimg要素（ぷよ画像プリロード用） -->
