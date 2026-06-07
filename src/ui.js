@@ -139,41 +139,22 @@ class UI {
     ctx.fillStyle = '#1a1a2e';
     ctx.fillRect(0, 0, cols * pw, rows * ph);
 
-    // ぷよの色マッピング
-    const COLORS = ['', '#ef4444','#3b82f6','#22c55e','#eab308','#a855f7'];
-
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         const puyo = board[y] && board[y][x];
         if (!puyo) continue;
         const isOjama = puyo === 6; // お邪魔ぷよは色6
+
+        let imgToDraw = null;
         if (isOjama) {
-          ctx.fillStyle = '#9ca3af';
-          ctx.beginPath();
-          ctx.arc(x * pw + pw/2, y * ph + ph/2, pw/2 - 2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#6b7280';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          // X印
-          ctx.strokeStyle = '#374151';
-          ctx.lineWidth = 1.5;
-          const m = 8;
-          ctx.beginPath();
-          ctx.moveTo(x*pw+m, y*ph+m); ctx.lineTo(x*pw+pw-m, y*ph+ph-m);
-          ctx.moveTo(x*pw+pw-m, y*ph+m); ctx.lineTo(x*pw+m, y*ph+ph-m);
-          ctx.stroke();
-        } else {
-          const color = COLORS[puyo] || '#888';
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.arc(x * pw + pw/2, y * ph + ph/2, pw/2 - 2, 0, Math.PI * 2);
-          ctx.fill();
-          // ハイライト
-          ctx.fillStyle = 'rgba(255,255,255,0.3)';
-          ctx.beginPath();
-          ctx.arc(x * pw + pw/2 - 3, y * ph + ph/2 - 3, pw/4, 0, Math.PI * 2);
-          ctx.fill();
+          imgToDraw = Ojama._ojamaCanvas;
+        } else if (puyo >= 1 && puyo <= 5) {
+          // PuyoImage.puyoImages[0] が色1に対応する
+          imgToDraw = PuyoImage.puyoImages[puyo - 1];
+        }
+
+        if (imgToDraw) {
+          ctx.drawImage(imgToDraw, x * pw, y * ph, pw, ph);
         }
       }
     }

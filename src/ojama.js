@@ -46,6 +46,7 @@ class Ojama {
     ctx.arc(size/2 - size*0.12, size/2 - size*0.12, size*0.2, 0, Math.PI*2);
     ctx.fill();
 
+    this._ojamaCanvas = canvas;
     this._ojamaDataURL = canvas.toDataURL();
   }
 
