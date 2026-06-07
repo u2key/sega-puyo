@@ -1,0 +1,13 @@
+{
+  "name": "sega-puyo-online",
+  "version": "1.0.0",
+  "description": "Online Puyo Puyo battle game based on SEGA programming challenge",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
