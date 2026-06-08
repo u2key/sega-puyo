@@ -8,6 +8,32 @@ class UI {
     this._createOpponentArea();
     this._createOjamaIndicator();
     this._createStatusBar();
+
+    // ウィンドウサイズに応じた全体スケーリング
+    window.addEventListener('resize', () => this.resize());
+    setTimeout(() => this.resize(), 0);
+  }
+
+  static resize() {
+    const wrapper = document.getElementById('scale-wrapper');
+    if (!wrapper) return;
+    
+    // ベースとなるレイアウトの想定サイズ
+    // 幅: 対戦相手(192) + 自フィールド(240) + NEXT(48) + マージン等(32) = 512
+    // 高さ: フィールド(480) + ラベル(30) + スコア(30) = 540
+    const baseW = 512;
+    const baseH = 540;
+    
+    const scaleW = window.innerWidth / baseW;
+    const scaleH = window.innerHeight / baseH;
+    const scale = Math.min(scaleW, scaleH) * 0.95; // 画面端に余裕を持たせるため0.95
+    
+    wrapper.style.transform = `scale(${scale})`;
+    
+    const actualW = baseW * scale;
+    const actualH = baseH * scale;
+    wrapper.style.left = `${(window.innerWidth - actualW) / 2}px`;
+    wrapper.style.top = `${(window.innerHeight - actualH) / 2}px`;
   }
 
   // ── オーバーレイ（マッチング待機画面）──────────────────────────────────
@@ -72,13 +98,11 @@ class UI {
 
     this.opponentWrapper = document.createElement('div');
     Object.assign(this.opponentWrapper.style, {
-      position: 'fixed',
-      top: '0',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       gap: '4px',
-      zIndex: '100',
+      width: '100%',
     });
 
     const label = document.createElement('div');
@@ -89,6 +113,8 @@ class UI {
     this.opponentCanvas.width = cols * pw;
     this.opponentCanvas.height = rows * ph;
     Object.assign(this.opponentCanvas.style, {
+      width: '100%',
+      boxSizing: 'border-box',
       border: '2px solid #555',
       borderRadius: '4px',
       background: '#1a1a2e',

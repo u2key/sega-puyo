@@ -10,8 +10,9 @@ Config.nextPuyosNumber = 2;
 Config.stageCols = 6;
 Config.stageRows = 12;
 
-Config.puyoImgHeight = (window.innerHeight-Config.fontHeight)/Config.stageRows
-Config.puyoImgWidth = Config.puyoImgHeight;
+// CSSのtransform:scaleで全体を拡縮するため、ベースサイズは固定にする
+Config.puyoImgWidth = 40;
+Config.puyoImgHeight = 40;
 
 Config.stageBackgroundColor = '#ffffff';
 Config.scoreBackgroundColor = '#24c0bb';

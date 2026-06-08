@@ -31,18 +31,22 @@
     </script>
   </head>
   <body>
-    <div id="game-container" style="display: flex; justify-content: center; align-items: flex-start; gap: 40px; padding-top: 40px; height: 100vh;">
+    <!-- 全体を拡縮するためのラッパー -->
+    <div id="scale-wrapper" style="position: absolute; top: 0; left: 0; transform-origin: top left; display: flex; justify-content: center; align-items: flex-end; padding: 10px;">
       
-      <!-- 対戦相手の表示エリア -->
-      <div id="opponent-container"></div>
+      <!-- 対戦相手の表示エリア (Ratio 4 = 192px) -->
+      <div id="opponent-container" style="width: 192px; display: flex; justify-content: center;"></div>
       
-      <!-- 自分のゲームフィールド -->
-      <div id="game-wrapper" style="position: relative;">
-        <div id="player-label" style="margin-bottom: 4px;">あなた</div>
+      <!-- 自分のゲームフィールド (Ratio 5 = 240px) -->
+      <div id="game-wrapper" style="position: relative; width: 240px; margin: 0 16px;">
+        <div id="player-label" style="margin-bottom: 4px; text-align: center;">あなた</div>
         <div id="stage" style="position:relative; overflow:hidden; background: url(img/puyo_2bg.png)"></div>
         <div id="score" style="overflow:hidden; text-align:right;"></div>
-        <!-- NEXT puyos: 自分のステージの右側に配置 -->
-        <div id="nextPuyos" style="position:absolute; overflow:hidden; top: 20px; right: -60px; width: 40px; height: 300px;"></div>
+      </div>
+
+      <!-- NEXT puyos: (Ratio 1 = 48px) -->
+      <div id="next-container" style="position: relative; width: 48px; height: 480px;">
+        <div id="nextPuyos" style="position:absolute; overflow:hidden; top: 0; left: 0; width: 48px; height: 100%;"></div>
       </div>
       
     </div>
