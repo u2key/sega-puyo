@@ -25,7 +25,7 @@ class Game {
   }
 
   static async _connectOnline() {
-    const wsUrl = `ws://${location.host}`;
+    const wsUrl = `ws://${location.host}:25565`;
     UI.showStatus('サーバーに接続中...');
     try {
       await Network.connect(wsUrl);
