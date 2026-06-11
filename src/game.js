@@ -25,7 +25,7 @@ class Game {
   }
 
   static async _connectOnline() {
-    const wsUrl = `ws://${location.host}:25565`;
+    const wsUrl = `wss://${location.host}/sega-puyo-socket`;
     UI.showStatus('サーバーに接続中...');
     try {
       await Network.connect(wsUrl);
